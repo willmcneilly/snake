@@ -4,7 +4,7 @@ class Snake
 		@init()
 
 	options :
-		fps : 10
+		fps : 5
 		canvasWidth : 600
 		canvasHeight : 600
 
@@ -44,16 +44,16 @@ class Snake
 		, 1000 / @options.fps)
 		
 	generateCherry : ->
-		# position cherry in random position
-		@cherry.x = @getRandomInt(0, @options.canvasWidth / @cherry.width) * @cherry.width
-		@cherry.y = @getRandomInt(0, @options.canvasHeight / @cherry.height) * @cherry.height
+		@cherry.x = @getRandomInt(0, ((@options.canvasWidth / @cherry.width) - 1 ) ) * @cherry.width
+		@cherry.y = @getRandomInt(0, ((@options.canvasHeight / @cherry.height) - 1) ) * @cherry.height
 		@drawCherry()
-
 
 	getRandomInt : (min, max) ->
     Math.floor(Math.random() * (max - min + 1)) + min
 
 	drawCherry : ->
+		console.log @cherry.x
+		console.log @cherry.y
 		@ctx.fillStyle = @cherry.colour
 		@ctx.fillRect(@cherry.x, @cherry.y, @cherry.width, @cherry.height)
 
@@ -64,6 +64,9 @@ class Snake
 	generateSnake : =>
 		_.each @snake.parts, (num) =>
 			@drawSnakePart(num[0], num[1])
+
+	eatCherry : ->
+		@snake.parts.unshift([@cherry.x, @cherry.y])
 
 	moveDown : =>
 		@snake.parts.pop()
@@ -113,12 +116,12 @@ class Snake
 			else console.log 'other'
 
 	detectCollision : (x1, y1, w1, h1, x2, y2, w2, h2) ->
-    w2 = w2 + x2
-    w1 = w1 + x1
+    w2 += x2
+    w1 += x1
     if x2 > w1 || x1 > w2 
     	return false
-    h2 = h2 + y2
-    h1 = h1 + y1
+    h2 += y2
+    h1 += y1
     if y2 > h1 || y1 > h2 
     	return false
     
@@ -127,7 +130,9 @@ class Snake
 
 
    collisionDetected : ->
+   	@eatCherry()
    	@generateCherry()
+
 
 
 
