@@ -8,6 +8,8 @@ class Snake
 
 	snake :
 		parts: [ [0,100], [0,75], [0,50], [0,25], [0,0] ],
+		width: 25
+		height: 25
 		moveVal : 25,
 		currentDirection : 'down'
 
@@ -16,6 +18,10 @@ class Snake
 		height : 25
 		x : 50
 		y : 50
+		colour : "red"
+
+	score :
+		points : 0
 
 	init : =>
 		@ctx = @canvas.getContext('2d')
@@ -31,6 +37,7 @@ class Snake
 			window.webkitRequestAnimationFrame(@drawScene)
 			@ctx.clearRect(0,0,600,600)
 			@move()
+			@detectCollision(@snake.parts[0][0], @snake.parts[0][1], @snake.width, @snake.height, @cherry.x, @cherry.y, @cherry.width, @cherry.height)
 			@generateCherry()
 		, 1000 / @options.fps)
 		
@@ -38,7 +45,7 @@ class Snake
 		@drawCherry( @cherry.x, @cherry.y, @cherry.width, @cherry.height )
 
 	drawCherry : (x, y, width, height) ->
-		@ctx.fillStyle = "red"
+		@ctx.fillStyle = @cherry.colour
 		@ctx.fillRect(x,y,width,height)
 
 	drawSnakePart : (x, y) =>
@@ -95,6 +102,18 @@ class Snake
 			when 37 then @moveLeft()
 			when 39 then @moveRight()
 			else console.log 'other'
+
+	detectCollision : (x1, y1, w1, h1, x2, y2, w2, h2) ->
+    w2 = w2 + x2
+    w1 = w1 + x1
+    if x2 > w1 || x1 > w2 
+    	return false
+    h2 = h2 + y2
+    h1 = h1 + y1
+    if y2 > h1 || y1 > h2 
+    	return false
+
+    console.log 'collision detected'
 		
 
 window?.Snake = Snake
