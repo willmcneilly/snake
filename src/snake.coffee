@@ -5,6 +5,8 @@ class Snake
 
 	options :
 		fps : 10
+		canvasWidth : 600
+		canvasHeight : 600
 
 	snake :
 		parts: [ [0,100], [0,75], [0,50], [0,25], [0,0] ],
@@ -37,16 +39,23 @@ class Snake
 			window.webkitRequestAnimationFrame(@drawScene)
 			@ctx.clearRect(0,0,600,600)
 			@move()
-			@detectCollision(@snake.parts[0][0], @snake.parts[0][1], @snake.width, @snake.height, @cherry.x, @cherry.y, @cherry.width, @cherry.height)
-			@generateCherry()
+			@drawCherry()
+			@detectCollision(@snake.parts[0][0], @snake.parts[0][1], @snake.width, @snake.height, @cherry.x, @cherry.y, @cherry.width, @cherry.height)			
 		, 1000 / @options.fps)
 		
 	generateCherry : ->
-		@drawCherry( @cherry.x, @cherry.y, @cherry.width, @cherry.height )
+		# position cherry in random position
+		@cherry.x = @getRandomInt(0, @options.canvasWidth / @cherry.width) * @cherry.width
+		@cherry.y = @getRandomInt(0, @options.canvasHeight / @cherry.height) * @cherry.height
+		@drawCherry()
 
-	drawCherry : (x, y, width, height) ->
+
+	getRandomInt : (min, max) ->
+    Math.floor(Math.random() * (max - min + 1)) + min
+
+	drawCherry : ->
 		@ctx.fillStyle = @cherry.colour
-		@ctx.fillRect(x,y,width,height)
+		@ctx.fillRect(@cherry.x, @cherry.y, @cherry.width, @cherry.height)
 
 	drawSnakePart : (x, y) =>
 		@ctx.fillStyle = "rgba(0, 0, 200, 1)"
@@ -112,8 +121,16 @@ class Snake
     h1 = h1 + y1
     if y2 > h1 || y1 > h2 
     	return false
+    
+    console.log 'collsion detected'
+    @collisionDetected()
 
-    console.log 'collision detected'
+
+   collisionDetected : ->
+   	@generateCherry()
+
+
+
 		
 
 window?.Snake = Snake
