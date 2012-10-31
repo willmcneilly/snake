@@ -1,5 +1,11 @@
 class Snake
 
+	## TODO
+	# Better cherry collison detection
+	# Sides collision detection
+	# Stop cherry appearing in snake
+	# self collision detection 
+
 	constructor : (@canvas) ->
 		@init()
 
@@ -38,6 +44,7 @@ class Snake
 		setTimeout( =>
 			window.webkitRequestAnimationFrame(@drawScene)
 			@ctx.clearRect(0,0,600,600)
+			@drawScore()
 			@move()
 			@drawCherry()
 			@detectCollision(@snake.parts[0][0], @snake.parts[0][1], @snake.width, @snake.height, @cherry.x, @cherry.y, @cherry.width, @cherry.height)			
@@ -52,10 +59,16 @@ class Snake
     Math.floor(Math.random() * (max - min + 1)) + min
 
 	drawCherry : ->
-		console.log @cherry.x
-		console.log @cherry.y
 		@ctx.fillStyle = @cherry.colour
 		@ctx.fillRect(@cherry.x, @cherry.y, @cherry.width, @cherry.height)
+
+	drawScore : ->
+		@ctx.fillStyle = "green";
+		@ctx.font = "bold 22px sans-serif";
+		@ctx.fillText(@score.points, 570, 30)
+
+	updateScore : ->
+		@score.points += 1
 
 	drawSnakePart : (x, y) =>
 		@ctx.fillStyle = "rgba(0, 0, 200, 1)"
@@ -125,13 +138,13 @@ class Snake
     if y2 > h1 || y1 > h2 
     	return false
     
-    console.log 'collsion detected'
     @collisionDetected()
 
 
    collisionDetected : ->
    	@eatCherry()
    	@generateCherry()
+   	@updateScore()
 
 
 
